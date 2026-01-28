@@ -5,52 +5,103 @@
 
   <div class="app-shell">
     <header class="top-bar">
-      <div class="logo-area">
+      <div class="logo-area" (click)="switchToSearch()" style="cursor: pointer;">
         <span class="sparkle">✨</span>
         <h1 class="mini-title">Smart<span>Lexicon</span></h1>
       </div>
+
+      <div class="nav-controls">
+        <button class="nav-btn" [class.active]="viewMode === 'search'" (click)="switchToSearch()">Search</button>
+        <button class="nav-btn" [class.active]="viewMode === 'history'" (click)="switchToHistory()">History</button>
+      </div>
       
-      <div class="search-mini">
+      <div class="search-mini" *ngIf="viewMode === 'search'">
         <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="search()" placeholder="Search word...">
         <button (click)="search()" [disabled]="isLoading">
-  <span *ngIf="!isLoading">Define</span>
-  <div *ngIf="isLoading" class="loader"></div> 
-</button>
+          <span *ngIf="!isLoading">Define</span>
+          <div *ngIf="isLoading" class="loader"></div> 
+        </button>
       </div>
     </header>
 
-    <div class="dashboard-grid" *ngIf="result">
-  
-  <aside class="side-panel">
-    <div class="glass-card main-info">
-      <h2 class="word">{{ result.word | titlecase }}</h2>
-      <div class="meaning-hero">
-        {{ result.meaning }}
-      </div>
+    <div class="dashboard-grid" *ngIf="viewMode === 'search' && result">
+      <aside class="side-panel">
+        <div class="glass-card main-info">
+          <h2 class="word">{{ result.word | titlecase }}</h2>
+          <div class="meaning-hero">{{ result.meaning }}</div>
+        </div>
+
+        <section class="glass-card detail-box spacing-top">
+          <h3 class="section-label">Context & Usage</h3>
+          <p class="explanation-text">{{ result.explanation }}</p>
+        </section>
+      </aside>
+
+      <main class="main-content">
+        <section class="glass-card detail-box">
+          <h3 class="section-label">Real-world Examples</h3>
+          <div class="example-grid">
+            <div class="example-item" *ngFor="let example of result.examples">
+              <p class="marathi-text">{{ example.marathi }}</p>
+              <p class="english-subtext">{{ example.english }}</p>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <section class="glass-card detail-box spacing-top">
-      <h3 class="section-label">Context & Usage</h3>
-      <p class="explanation-text">{{ result.explanation }}</p>
-    </section>
-  </aside>
+    <div class="history-container" *ngIf="viewMode === 'history'">
+      <h2 class="section-label">Your Saved Vocabulary</h2>
+      
+      <div class="history-grid" *ngIf="history.length > 0; else noHistory">
+        <div class="glass-card history-item" 
+             *ngFor="let item of history" 
+             [class.expanded]="selectedHistoryId === item.id"
+             (click)="toggleExpand(item.id)">
+          
+          <div class="history-header">
+            <div class="header-main">
+              <h3 class="history-word">{{ item.word }}</h3>
+              <p class="history-meaning">{{ item.meaning }}</p>
+            </div>
+            <button class="delete-btn" (click)="deleteEntry(item.id, $event)" title="Delete word">
+              🗑️
+            </button>
+          </div>
 
-  <main class="main-content">
-    <section class="glass-card detail-box">
-      <h3 class="section-label">Real-world Examples</h3>
-      <div class="example-grid">
-        <div class="example-item" *ngFor="let example of result.examples; let i = index">
-          <!-- <span class="ex-num">EXAMPLE {{ i + 1 }}</span> -->
-          <p class="marathi-text">{{ example.marathi }}</p>
-          <p class="english-subtext">{{ example.english }}</p>
+          <div class="expandable-content" *ngIf="selectedHistoryId === item.id">
+            <div class="divider"></div>
+            
+            <div class="detail-group">
+              <h4 class="mini-label">Context & Usage</h4>
+              <p class="history-explanation">{{ item.explanation }}</p>
+            </div>
+
+            <div class="detail-group">
+              <h4 class="mini-label">Examples</h4>
+              <div class="hist-example-item" *ngFor="let ex of item.examples">
+                <p class="m-text">{{ ex.marathi }}</p>
+                <p class="e-text">{{ ex.english }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="expand-indicator" *ngIf="selectedHistoryId !== item.id">
+            Tap to view details ▾
+          </div>
         </div>
       </div>
-    </section>
-  </main>
 
-</div>
+      <ng-template #noHistory>
+        <div class="welcome-state">
+          <div class="icon-orb">📁</div>
+          <h2>No saved words yet</h2>
+          <p>Search for words to build your personal lexicon.</p>
+        </div>
+      </ng-template>
+    </div>
 
-    <div class="welcome-state" *ngIf="!result && !errorMsg">
+    <div class="welcome-state" *ngIf="viewMode === 'search' && !result && !errorMsg">
       <div class="icon-orb">📖</div>
       <h2>Ready to explore?</h2>
       <p>Enter a word above to see the magic happen.</p>

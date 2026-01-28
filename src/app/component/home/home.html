@@ -10,10 +10,7 @@
         <h1 class="mini-title">Smart<span>Lexicon</span></h1>
       </div>
 
-      <div class="nav-controls">
-        <button class="nav-btn" [class.active]="viewMode === 'search'" (click)="switchToSearch()">Search</button>
-        <button class="nav-btn" [class.active]="viewMode === 'history'" (click)="switchToHistory()">History</button>
-      </div>
+
       
       <div class="search-wrapper" *ngIf="viewMode === 'search'">
         <div class="search-mini" [class.invalid-input]="!isValidWord && searchTerm.length > 2">
@@ -35,6 +32,11 @@
             <span class="search-icon">🔍</span> {{ s }}
           </li>
         </ul>
+      </div>
+            <div class="nav-controls">
+        <button class="nav-btn" [class.active]="viewMode === 'search'" (click)="switchToSearch()">Search</button>
+        <button class="nav-btn" (click)="quiz()" title="Go to Quize Mode"> Quiz</button>
+        <button class="nav-btn" [class.active]="viewMode === 'history'" (click)="switchToHistory()">History</button>
       </div>
     </header>
 

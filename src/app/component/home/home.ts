@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MainService, WordResponse, WordEntity } from '../../services/main-service';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +31,8 @@ export class Home implements OnInit, OnDestroy {
 
   constructor(
     private dictionaryService: MainService,
-    private cdr: ChangeDetectorRef 
+    private cdr: ChangeDetectorRef,
+    private router: Router 
   ) {}
 
   ngOnInit() {
@@ -159,6 +161,11 @@ export class Home implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Delete failed:', err)
     });
+  }
+
+  quiz() {
+    // Navigate back to home route
+    this.router.navigate(['/quiz']); 
   }
 
   ngOnDestroy() {

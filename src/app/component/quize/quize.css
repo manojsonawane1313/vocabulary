@@ -1,0 +1,245 @@
+:host {
+  --bg-dark: #020617; 
+  --accent: #6366f1; 
+  --accent-glow: rgba(99, 102, 241, 0.4);
+  --accent-secondary: #f43f5e; 
+  --text-main: #ffffff;
+  --text-dim: #94a3b8;
+  --glass-bg: rgba(15, 23, 42, 0.7); 
+  --glass-border: rgba(255, 255, 255, 0.1); 
+  --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* --- Core Layout --- */
+.main-container {
+  min-height: 100vh;
+  background: var(--bg-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate; /* Creates a new stacking context */
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 500px;
+  z-index: 10;
+  position: relative;
+}
+
+/* --- Click-Through Mesh Background --- */
+.mesh-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1;
+  filter: blur(100px);
+  opacity: 0.6;
+  pointer-events: none; /* Allows clicks to pass through to buttons */
+}
+
+.mesh-bg::before, .mesh-bg::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  animation: float 20s infinite alternate ease-in-out;
+}
+
+.mesh-bg::before {
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  top: -10%; left: -10%;
+}
+
+.mesh-bg::after {
+  background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+  bottom: -10%; right: -10%;
+}
+
+/* --- Glass Card --- */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 32px;
+  padding: 40px;
+  box-shadow: var(--card-shadow);
+  color: var(--text-main);
+}
+
+/* --- Header Elements --- */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.badge.primary { 
+  background: var(--accent); 
+  color: white; 
+  box-shadow: 0 0 15px var(--accent-glow); 
+}
+
+.badge.secondary { 
+  background: rgba(255,255,255,0.05); 
+  color: var(--text-dim); 
+  border: 1px solid var(--glass-border);
+  margin-right: 8px;
+}
+
+.exit-btn {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--accent-secondary);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  width: 34px; height: 34px; border-radius: 10px;
+  cursor: pointer; transition: 0.3s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.exit-btn:hover { background: var(--accent-secondary); color: white; transform: rotate(90deg); }
+
+/* --- Question Area --- */
+.question-box { text-align: center; margin-bottom: 35px; }
+
+.section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent-secondary);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.word-display {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(to bottom right, #ffffff, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px var(--accent-glow));
+}
+
+/* --- Options List --- */
+.options-list { display: grid; gap: 12px; }
+
+.opt-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 18px 24px;
+  color: var(--text-main);
+  text-align: left;
+  font-size: 1.05rem;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 20; /* Ensure button is on top of card effects */
+}
+
+.opt-card:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent);
+  transform: translateX(8px);
+}
+
+.opt-card.correct {
+  background: rgba(34, 197, 94, 0.15) !important;
+  border-color: #22c55e !important;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+.opt-card.wrong {
+  background: rgba(244, 63, 94, 0.15) !important;
+  border-color: var(--accent-secondary) !important;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+}
+
+.opt-card:disabled { opacity: 0.6; pointer-events: none; }
+.opt-card.correct:disabled, .opt-card.wrong:disabled { opacity: 1; pointer-events: none; }
+
+/* --- Results/Actions --- */
+.next-btn, .primary-btn {
+  width: 100%;
+  margin-top: 30px;
+  padding: 18px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 10px 20px var(--accent-glow);
+}
+
+.next-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+/* --- Completion Screen --- */
+.completion-screen { text-align: center; }
+.trophy-wrapper { position: relative; display: inline-block; margin-bottom: 20px; }
+.trophy { font-size: 5rem; position: relative; z-index: 5; }
+.trophy-glow {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 100px; height: 100px; background: var(--accent);
+  filter: blur(40px); opacity: 0.5;
+}
+
+.final-score-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 30px;
+  margin: 25px 0;
+}
+
+.score-display { font-size: 3.5rem; font-weight: 800; color: var(--accent); }
+.score-display .total { font-size: 1.5rem; color: var(--text-dim); }
+
+.progress-container {
+  height: 6px; background: rgba(255,255,255,0.1);
+  border-radius: 10px; margin-top: 20px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  transition: width 1s ease-out;
+}
+
+/* --- Loading Spinner --- */
+.loader-container { padding: 40px; text-align: center; }
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+/* --- Animations --- */
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes float {
+  from { transform: translate(0, 0); }
+  to { transform: translate(5%, 10%); }
+}
+
+@keyframes wordReveal {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

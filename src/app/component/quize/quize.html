@@ -1,0 +1,76 @@
+<div class="main-container">
+  <div class="mesh-bg"></div>
+
+  <div class="app-shell">
+    <div class="quiz-container glass-card">
+      
+      @if (quizComplete) {
+        <div class="completion-screen animate-in">
+          <div class="trophy-wrapper">
+             <div class="trophy">🏆</div>
+             <div class="trophy-glow"></div>
+          </div>
+          <h2 class="word">Well Done!</h2>
+          <p class="meaning-hero">You've mastered this set of words.</p>
+          
+          <div class="final-score-card">
+            <span class="section-label">Final Performance</span>
+            <div class="score-display">
+              {{ score }} <span class="total">/ {{ allWords.length }}</span>
+            </div>
+            <div class="progress-container">
+               <div class="progress-bar" [style.width.%]="(score / allWords.length) * 100"></div>
+            </div>
+          </div>
+          
+          <button class="primary-btn" (click)="goHome()">Return to main page</button>
+        </div>
+      }
+
+      @else if (currentWord) {
+        <div class="quiz-header">
+          <div class="stats-group">
+            <span class="badge secondary">Rem: {{ remainingWords.length + 1 }}</span>
+            <span class="badge primary">Score: {{ score }}</span>
+          </div>
+          <button class="exit-btn" (click)="goHome()" title="Exit Quiz">✕</button>
+        </div>
+
+        <div class="question-box">
+          <span class="section-label">Select the correct meaning:</span>
+          <h1 class="word-display">{{ currentWord.word }}</h1>
+        </div>
+
+        <div class="options-list">
+          @for (opt of options; track opt) {
+            <button 
+              class="opt-card"
+              (click)="checkAnswer(opt)"
+              [disabled]="answered"
+              [class.correct]="answered && opt === currentWord.meaning"
+              [class.wrong]="answered && selectedAnswer === opt && opt !== currentWord.meaning">
+              <span class="opt-text">{{ opt }}</span>
+              <div class="status-dot"></div>
+            </button>
+          }
+        </div>
+
+        @if (answered) {
+          <div class="footer-action">
+            <button class="next-btn" (click)="nextQuestion()">
+              {{ remainingWords.length > 0 ? 'Next Question' : 'View Results' }}
+              <span class="arrow">→</span>
+            </button>
+          </div>
+        }
+      }
+
+      @else {
+        <div class="loader-container">
+          <div class="spinner"></div>
+          <p>Syncing your progress...</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

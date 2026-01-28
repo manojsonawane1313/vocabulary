@@ -1,0 +1,67 @@
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<div class="main-container">
+  
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="search-section">
+    <h1 class="app-title">✨ Smart <span class="gradient-text">Dictionary</span></h1>
+    <p class="subtitle">Discover words in a beautiful way</p>
+    
+    <div class="search-box-wrapper">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (keyup.enter)="search()"
+          placeholder="Search for a word..."
+        />
+        <button (click)="search()" [disabled]="isLoading" [class.loading]="isLoading">
+          {{ isLoading ? 'Thinking...' : 'Define' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-container" *ngIf="result">
+    
+    <div class="glass-card main-card">
+      <div class="card-header">
+        <div class="word-group">
+          <h2 class="word-highlight">{{ result.word | titlecase }}</h2>
+          <div class="meaning-badge">{{ result.meaning }}</div>
+        </div>
+        <div class="action-dots"></div>
+      </div>
+      
+      <div class="explanation-box">
+        <strong>💡 Explanation</strong>
+        <p>{{ result.explanation }}</p>
+      </div>
+    </div>
+
+    <div class="examples-section">
+      <h3>✨ Usage Examples</h3>
+      <div class="glass-table-wrapper">
+        <table class="styled-table">
+          <tbody>
+            <tr *ngFor="let example of result.examples; let i = index">
+              <td class="index-col">
+                <span class="number-circle">{{ i + 1 }}</span>
+              </td>
+              <td class="text-col">{{ example }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="error-msg glass-card" *ngIf="errorMsg">
+    ⚠️ {{ errorMsg }}
+  </div>
+
+</div>

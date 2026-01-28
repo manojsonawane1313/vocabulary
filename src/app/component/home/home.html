@@ -1,67 +1,63 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 
 <div class="main-container">
-  
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
+  <div class="mesh-bg"></div>
 
-  <div class="search-section">
-    <h1 class="app-title">✨ Smart <span class="gradient-text">Dictionary</span></h1>
-    <p class="subtitle">Discover words in a beautiful way</p>
-    
-    <div class="search-box-wrapper">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input 
-          type="text" 
-          [(ngModel)]="searchTerm" 
-          (keyup.enter)="search()"
-          placeholder="Search for a word..."
-        />
-        <button (click)="search()" [disabled]="isLoading" [class.loading]="isLoading">
-          {{ isLoading ? 'Thinking...' : 'Define' }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="result-container" *ngIf="result">
-    
-    <div class="glass-card main-card">
-      <div class="card-header">
-        <div class="word-group">
-          <h2 class="word-highlight">{{ result.word | titlecase }}</h2>
-          <div class="meaning-badge">{{ result.meaning }}</div>
-        </div>
-        <div class="action-dots"></div>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="logo-area">
+        <span class="sparkle">✨</span>
+        <h1 class="mini-title">Smart<span>Lexicon</span></h1>
       </div>
       
-      <div class="explanation-box">
-        <strong>💡 Explanation</strong>
-        <p>{{ result.explanation }}</p>
+      <div class="search-mini">
+        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="search()" placeholder="Search word...">
+        <button (click)="search()" [disabled]="isLoading">
+  <span *ngIf="!isLoading">Define</span>
+  <div *ngIf="isLoading" class="loader"></div> 
+</button>
+      </div>
+    </header>
+
+    <div class="dashboard-grid" *ngIf="result">
+  
+  <aside class="side-panel">
+    <div class="glass-card main-info">
+      <h2 class="word">{{ result.word | titlecase }}</h2>
+      <div class="meaning-hero">
+        {{ result.meaning }}
       </div>
     </div>
 
-    <div class="examples-section">
-      <h3>✨ Usage Examples</h3>
-      <div class="glass-table-wrapper">
-        <table class="styled-table">
-          <tbody>
-            <tr *ngFor="let example of result.examples; let i = index">
-              <td class="index-col">
-                <span class="number-circle">{{ i + 1 }}</span>
-              </td>
-              <td class="text-col">{{ example }}</td>
-            </tr>
-          </tbody>
-        </table>
+    <section class="glass-card detail-box spacing-top">
+      <h3 class="section-label">Context & Usage</h3>
+      <p class="explanation-text">{{ result.explanation }}</p>
+    </section>
+  </aside>
+
+  <main class="main-content">
+    <section class="glass-card detail-box">
+      <h3 class="section-label">Real-world Examples</h3>
+      <div class="example-grid">
+        <div class="example-item" *ngFor="let example of result.examples; let i = index">
+          <!-- <span class="ex-num">EXAMPLE {{ i + 1 }}</span> -->
+          <p class="marathi-text">{{ example.marathi }}</p>
+          <p class="english-subtext">{{ example.english }}</p>
+        </div>
       </div>
+    </section>
+  </main>
+
+</div>
+
+    <div class="welcome-state" *ngIf="!result && !errorMsg">
+      <div class="icon-orb">📖</div>
+      <h2>Ready to explore?</h2>
+      <p>Enter a word above to see the magic happen.</p>
     </div>
 
+    <div class="error-toast" *ngIf="errorMsg">
+      ⚠️ {{ errorMsg }}
+    </div>
   </div>
-
-  <div class="error-msg glass-card" *ngIf="errorMsg">
-    ⚠️ {{ errorMsg }}
-  </div>
-
 </div>

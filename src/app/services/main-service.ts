@@ -8,7 +8,7 @@ export interface WordResponse {
   language: string;
   meaning: string;
   explanation: string;
-  examples: string[];
+  examples: { marathi: string; english: string }[];
 }
 
 @Injectable({

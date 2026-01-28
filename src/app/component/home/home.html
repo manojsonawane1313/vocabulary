@@ -15,12 +15,26 @@
         <button class="nav-btn" [class.active]="viewMode === 'history'" (click)="switchToHistory()">History</button>
       </div>
       
-      <div class="search-mini" *ngIf="viewMode === 'search'">
-        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="search()" placeholder="Search word...">
-        <button (click)="search()" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Define</span>
-          <div *ngIf="isLoading" class="loader"></div> 
-        </button>
+      <div class="search-wrapper" *ngIf="viewMode === 'search'">
+        <div class="search-mini" [class.invalid-input]="!isValidWord && searchTerm.length > 2">
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            (input)="onTyping()"
+            (keyup.enter)="search()" 
+            placeholder="Search word...">
+          
+          <button (click)="search()" [disabled]="isLoading || !isValidWord">
+            <span *ngIf="!isLoading">Define</span>
+            <div *ngIf="isLoading" class="loader"></div> 
+          </button>
+        </div>
+
+        <ul class="suggestion-dropdown" *ngIf="suggestions.length > 0">
+          <li *ngFor="let s of suggestions" (click)="selectSuggestion(s)">
+            <span class="search-icon">🔍</span> {{ s }}
+          </li>
+        </ul>
       </div>
     </header>
 
@@ -52,7 +66,6 @@
 
     <div class="history-container" *ngIf="viewMode === 'history'">
       <h2 class="section-label">Your Saved Vocabulary</h2>
-      
       <div class="history-grid" *ngIf="history.length > 0; else noHistory">
         <div class="glass-card history-item" 
              *ngFor="let item of history" 
@@ -60,23 +73,37 @@
              (click)="toggleExpand(item.id)">
           
           <div class="history-header">
-            <div class="header-main">
-              <h3 class="history-word">{{ item.word }}</h3>
-              <p class="history-meaning">{{ item.meaning }}</p>
-            </div>
-            <button class="delete-btn" (click)="deleteEntry(item.id, $event)" title="Delete word">
-              🗑️
-            </button>
-          </div>
+  <div class="header-main">
+    <h3 class="history-word">{{ item.word }}</h3>
+    <p class="history-meaning">{{ item.meaning }}</p>
+  </div>
+
+  <div class="header-actions">
+    <!-- Back / Close button -->
+    <button 
+      class="back-btn"
+      *ngIf="selectedHistoryId === item.id"
+      (click)="closeExpanded($event)">
+      ← Back
+    </button>
+
+    <!-- Delete button -->
+    <button 
+      class="delete-btn"
+      (click)="deleteEntry(item.id, $event)">
+      🗑️
+    </button>
+  </div>
+</div>
+
+          
 
           <div class="expandable-content" *ngIf="selectedHistoryId === item.id">
             <div class="divider"></div>
-            
             <div class="detail-group">
               <h4 class="mini-label">Context & Usage</h4>
               <p class="history-explanation">{{ item.explanation }}</p>
             </div>
-
             <div class="detail-group">
               <h4 class="mini-label">Examples</h4>
               <div class="hist-example-item" *ngFor="let ex of item.examples">
@@ -85,10 +112,7 @@
               </div>
             </div>
           </div>
-
-          <div class="expand-indicator" *ngIf="selectedHistoryId !== item.id">
-            Tap to view details ▾
-          </div>
+          <div class="expand-indicator" *ngIf="selectedHistoryId !== item.id">Tap to view details ▾</div>
         </div>
       </div>
 
@@ -96,7 +120,6 @@
         <div class="welcome-state">
           <div class="icon-orb">📁</div>
           <h2>No saved words yet</h2>
-          <p>Search for words to build your personal lexicon.</p>
         </div>
       </ng-template>
     </div>
@@ -107,8 +130,6 @@
       <p>Enter a word above to see the magic happen.</p>
     </div>
 
-    <div class="error-toast" *ngIf="errorMsg">
-      ⚠️ {{ errorMsg }}
-    </div>
+    <div class="error-toast" *ngIf="errorMsg">⚠️ {{ errorMsg }}</div>
   </div>
 </div>

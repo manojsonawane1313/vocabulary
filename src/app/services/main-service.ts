@@ -28,14 +28,27 @@ export class MainService {
     return this.http.get<WordResponse>(`${this.baseUrl}/lookup?word=${word}`);
   }
 
-  getSuggestions(word: string): Observable<string[]> {
-    if (!word.trim()) return of([]);
+getSuggestions(word: string): Observable<string[]> {
+  if (!word.trim()) return of([]);
 
+  // Check if the input contains Marathi (Devanagari) characters
+  const isMarathi = /[\u0900-\u097F]/.test(word);
+
+  if (isMarathi) {
+    // Google Input Tools API for Marathi suggestions
+    const url = `https://inputtools.google.com/request?itc=mr-t-i0-und&num=5&cp=0&cs=1&ie=utf-8&oe=utf-8&app=demopage&text=${word}`;
+    return this.http.get<any[]>(url).pipe(
+      map(res => res[1][0][1]), // Extract the array of suggestions
+      catchError(() => of([]))
+    );
+  } else {
+    // Fallback to Datamuse for English
     return this.http.get<any[]>(`${this.suggestionUrl}${word}`).pipe(
       map(results => results.map(res => res.word)),
-      catchError(() => of([])) 
+      catchError(() => of([]))
     );
   }
+}
 
 
   saveToDb(data: WordResponse): Observable<WordResponse> {

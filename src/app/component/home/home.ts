@@ -34,33 +34,35 @@ export class Home implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Logic to fetch suggestions as the user types
-    this.searchSubscription = this.searchSubject.pipe(
-      debounceTime(300), // Wait for user to stop typing
-      distinctUntilChanged(),
-      switchMap(term => {
-        if (term.length < 2) {
-          this.suggestions = [];
-          this.isValidWord = false;
-          return of([]);
-        }
-        this.isChecking = true;
-        return this.dictionaryService.getSuggestions(term);
-      })
-    ).subscribe({
-      next: (list: string[]) => {
-        this.suggestions = list;
-        // The word is considered "valid" if it exists in the suggestion list 
-        // or if the list has results (indicating it's a real word)
-        this.isValidWord = list.length > 0; 
-        this.isChecking = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.isChecking = false;
-        this.isValidWord = false;
-      }
-    });
+   this.searchSubscription = this.searchSubject.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(term => {
+    // 1. Basic length check
+    if (term.length < 2) {
+      this.suggestions = [];
+      this.isValidWord = false;
+      return of([]);
+    }
+
+    // 2. Manual Validation: Allow Devanagari (Marathi) or Latin (English)
+    // Range \u0900-\u097F covers Devanagari
+    const marathiRegex = /[\u0900-\u097F]/;
+    const englishRegex = /^[a-zA-Z]+$/;
+    
+    // If it's a "real" word in either script, enable the button immediately
+    this.isValidWord = marathiRegex.test(term) || englishRegex.test(term);
+
+    this.isChecking = true;
+    return this.dictionaryService.getSuggestions(term);
+  })
+).subscribe({
+  next: (list: string[]) => {
+    this.suggestions = list;
+    this.isChecking = false;
+    this.cdr.detectChanges();
+  }
+});
   }
 
   onTyping() {

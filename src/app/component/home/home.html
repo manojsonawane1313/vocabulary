@@ -35,8 +35,9 @@
       </div>
             <div class="nav-controls">
         <button class="nav-btn" [class.active]="viewMode === 'search'" (click)="switchToSearch()">Search</button>
+        <button class="nav-btn" [class.active]="viewMode === 'progress'" (click)="switchToProgress()">In Progress</button>
+        <button class="nav-btn" [class.active]="viewMode === 'history'" (click)="switchToMastery()">Mastered</button>
         <button class="nav-btn" (click)="quiz()" title="Go to Quize Mode"> Quiz</button>
-        <button class="nav-btn" [class.active]="viewMode === 'history'" (click)="switchToHistory()">History</button>
       </div>
     </header>
 
@@ -66,9 +67,13 @@
       </main>
     </div>
 
-    <div class="history-container" *ngIf="viewMode === 'history'">
-      <h2 class="section-label">Your Saved Vocabulary</h2>
-      <div class="history-grid" *ngIf="history.length > 0; else noHistory">
+    <div class="history-container" *ngIf="viewMode === 'history' || viewMode === 'progress'">
+  <h2 class="section-label">
+    {{ viewMode === 'history' ? 'Mastered Vocabulary' : 'Vocabulary In Progress' }}
+  </h2>
+  
+  <div class="history-grid" *ngIf="history.length > 0; else noHistory">
+
         <div class="glass-card history-item" 
              *ngFor="let item of history" 
              [class.expanded]="selectedHistoryId === item.id"

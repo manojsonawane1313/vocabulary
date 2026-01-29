@@ -12,6 +12,7 @@ export interface WordResponse {
 
 export interface WordEntity extends WordResponse {
   id: string;
+  count: number;
 }
 
 @Injectable({
@@ -62,4 +63,17 @@ getSuggestions(word: string): Observable<string[]> {
   deleteWord(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
+  
+  deleteCurrentWord(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/deleteCurrent/${id}`);
+  }
+
+  incrementWordCount(id: string): Observable<WordEntity> {
+    return this.http.put<WordEntity>(`${this.baseUrl}/increment-count/${id}`, {});
+  }
+
+  // Add this to your MainService class
+getMastery(): Observable<WordEntity[]> {
+  return this.http.get<WordEntity[]>(`${this.baseUrl}/master`);
+}
 }

@@ -26,7 +26,7 @@ export class Home implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private searchSubscription?: Subscription;
 
-  viewMode: 'search' | 'history' = 'search';
+  viewMode: 'search' | 'history' | 'progress' = 'search';
   selectedHistoryId: string | null = null; 
 
   constructor(
@@ -36,40 +36,38 @@ export class Home implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-   this.searchSubscription = this.searchSubject.pipe(
-  debounceTime(300),
-  distinctUntilChanged(),
-  switchMap(term => {
-    // 1. Basic length check
-    if (term.length < 2) {
-      this.suggestions = [];
-      this.isValidWord = false;
-      return of([]);
+  this.searchSubscription = this.searchSubject.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    switchMap(term => {
+      if (term.length < 2) {
+        this.suggestions = [];
+        this.isValidWord = false; // Disable if too short
+        return of([]);
+      }
+
+      this.isChecking = true;
+      // We no longer set isValidWord here based on Regex alone
+      return this.dictionaryService.getSuggestions(term);
+    })
+  ).subscribe({
+    next: (list: string[]) => {
+      this.suggestions = list;
+      this.isChecking = false;
+
+      // NEW LOGIC: Enable button ONLY if the typed word is exactly in the suggestion list
+      // We use case-insensitive comparison for better UX
+      this.isValidWord = list.some(s => s.toLowerCase() === this.searchTerm.toLowerCase());
+      
+      this.cdr.detectChanges();
     }
+  });
+}
 
-    // 2. Manual Validation: Allow Devanagari (Marathi) or Latin (English)
-    // Range \u0900-\u097F covers Devanagari
-    const marathiRegex = /[\u0900-\u097F]/;
-    const englishRegex = /^[a-zA-Z]+$/;
-    
-    // If it's a "real" word in either script, enable the button immediately
-    this.isValidWord = marathiRegex.test(term) || englishRegex.test(term);
-
-    this.isChecking = true;
-    return this.dictionaryService.getSuggestions(term);
-  })
-).subscribe({
-  next: (list: string[]) => {
-    this.suggestions = list;
-    this.isChecking = false;
-    this.cdr.detectChanges();
-  }
-});
-  }
-
-  onTyping() {
-    this.searchSubject.next(this.searchTerm);
-  }
+onTyping() {
+  this.isValidWord = false; // Lock the button immediately when user starts typing
+  this.searchSubject.next(this.searchTerm);
+}
 
   selectSuggestion(word: string) {
     this.searchTerm = word;
@@ -84,11 +82,17 @@ export class Home implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  switchToHistory() {
-    this.viewMode = 'history';
-    this.selectedHistoryId = null; 
-    this.fetchHistory();
-  }
+switchToMastery() {
+  this.viewMode = 'history'; // Represents "Mastered"
+  this.selectedHistoryId = null; 
+  this.fetchMastery();
+}
+
+switchToProgress() {
+  this.viewMode = 'progress'; // Now this matches your template check!
+  this.selectedHistoryId = null; 
+  this.fetchProgress();
+}
 
   toggleExpand(id: string) {
     this.selectedHistoryId = this.selectedHistoryId === id ? null : id;
@@ -133,7 +137,23 @@ export class Home implements OnInit, OnDestroy {
     });
   }
 
-  fetchHistory() {
+  fetchMastery() {
+    this.isLoading = true;
+    this.dictionaryService.getMastery().subscribe({
+      next: (data) => {
+        this.history = data;
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMsg = 'Failed to load history.';
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  fetchProgress() {
     this.isLoading = true;
     this.dictionaryService.getHistory().subscribe({
       next: (data) => {
@@ -149,19 +169,33 @@ export class Home implements OnInit, OnDestroy {
     });
   }
 
-  deleteEntry(id: string, event: Event) {
-    event.stopPropagation();
-    if (!confirm('Are you sure you want to delete this word?')) return;
+deleteEntry(id: string, event: Event) {
+  event.stopPropagation();
+  if (!confirm('Are you sure you want to delete this word?')) return;
 
-    this.dictionaryService.deleteWord(id).subscribe({
-      next: () => {
-        this.history = this.history.filter(item => item.id !== id);
-        if (this.selectedHistoryId === id) this.selectedHistoryId = null;
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('Delete failed:', err)
-    });
-  }
+  // 1. Determine which service method to use
+  const deleteObservable = this.viewMode === 'progress' 
+    ? this.dictionaryService.deleteCurrentWord(id)  // For In Progress
+    : this.dictionaryService.deleteWord(id);         // For Mastered
+
+  // 2. Execute the delete
+  deleteObservable.subscribe({
+    next: () => {
+      // Remove from the local array so the UI updates immediately
+      this.history = this.history.filter(item => (item.id || (item as any)._id) !== id);
+      
+      if (this.selectedHistoryId === id) {
+        this.selectedHistoryId = null;
+      }
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Delete failed:', err);
+      this.errorMsg = 'Could not delete the word. Please try again.';
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   quiz() {
     // Navigate back to home route

@@ -79,13 +79,35 @@ export class Quize implements OnInit {
   }
 
   checkAnswer(choice: string) {
-    if (this.answered) return;
-    this.answered = true;
-    this.selectedAnswer = choice;
-    if (choice === this.currentWord?.meaning) {
-      this.score++;
-    }
+  if (this.answered || !this.currentWord) return;
+
+  this.answered = true;
+  this.selectedAnswer = choice;
+
+  if (choice === this.currentWord.meaning) {
+    this.score++;
+    
+    // Safety check: log the ID to console to make sure it exists
+    console.log('Incrementing word ID:', this.currentWord.id);
+
+    this.dictionaryService.incrementWordCount(this.currentWord.id).subscribe({
+      next: (res: any) => {
+        if (res && res.status === 'mastered') {
+          // Remove from local array so it doesn't appear in next question
+          this.allWords = this.allWords.filter(w => w.id !== this.currentWord?.id);
+          console.log('Word mastered and moved!');
+        } else if (res && res.count) {
+          // Update the count locally
+          this.currentWord!.count = res.count;
+          console.log('New count saved:', res.count);
+        }
+      },
+      error: (err) => {
+        console.error('Increment failed at API level:', err);
+      }
+    });
   }
+}
 
   goHome() {
     // Navigate back to home route

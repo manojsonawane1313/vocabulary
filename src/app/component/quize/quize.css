@@ -11,7 +11,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* --- Core Layout --- */
+
 .main-container {
   min-height: 100vh;
   background: var(--bg-dark);
@@ -21,7 +21,7 @@
   padding: 20px;
   position: relative;
   overflow: hidden;
-  isolation: isolate; /* Creates a new stacking context */
+  isolation: isolate; 
 }
 
 .app-shell {

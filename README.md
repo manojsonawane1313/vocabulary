@@ -1,59 +1,20 @@
-# Vocabulary
+Vocabulary Mastery Platform: Contextual Learning & Guaranteed Retention
+The Vocabulary Mastery Platform is a research-driven, web-based application specifically engineered to assist native Marathi speakers in acquiring English proficiency through long-term memory consolidation. Unlike traditional dictionaries that prioritize immediate translation, this platform bridges the linguistic gap using a dual-strategy approach of contextual learning and an intelligent retention engine
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+Core Methodology & Research Principles
+This platform addresses the pedagogical gaps of "single exposure" learning through three key cognitive principles:
 
-## Development server
+1. Active Recall & Effortful Learning
+Instead of passive reading, the system utilize MCQ-based quizzes and practice modules that force the brain to engage in "effortful" learning. This "struggle" builds deeper neural connections, ensuring the word actually sticks.
 
-To start a local development server, run:
+2. Spaced Repetition System (SRS)
+Based on the Ebbinghaus Forgetting Curve, the platform tests users at expanding intervals (1 day, 3 days, 1 week, etc.) to combat memory decay.
 
-```bash
-ng serve
-```
+3. The "Self-Cleaning" Inventory
+To solve "review fatigue," the platform uses a data-driven algorithm that monitors mastery levels. A word is only moved to the "Mastered Inventory" after a user demonstrates a verified 5-test successful streak over an 8-week cycle.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Backend (Processing Layer)
+Framework: Spring Boot (Java) utilizing a RESTful architecture.
 
-## Code scaffolding
+AI Integration: Integrates a Generative AI (DeepSeek/Grok) module to synthesize Marathi-English "contextual bridges," providing detailed meanings, explanations, and three real-life usage examples.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

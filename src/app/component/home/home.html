@@ -1,16 +1,11 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
-
 <div class="main-container">
   <div class="mesh-bg"></div>
 
   <div class="app-shell">
     <header class="top-bar">
       <div class="logo-area" (click)="switchToSearch()" style="cursor: pointer;">
-        <span class="sparkle">✨</span>
         <h1 class="mini-title">Smart<span>Lexicon</span></h1>
       </div>
-
-
       
       <div class="search-wrapper" *ngIf="viewMode === 'search'">
         <div class="search-mini" [class.invalid-input]="!isValidWord && searchTerm.length > 2">
@@ -86,7 +81,6 @@
   </div>
 
   <div class="header-actions">
-    <!-- Back / Close button -->
     <button 
       class="back-btn"
       *ngIf="selectedHistoryId === item.id"
@@ -94,7 +88,6 @@
       ← Back
     </button>
 
-    <!-- Delete button -->
     <button 
       class="delete-btn"
       (click)="deleteEntry(item.id, $event)">

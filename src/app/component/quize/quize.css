@@ -1,16 +1,15 @@
 :host {
-  --bg-dark: #020617; 
-  --accent: #6366f1; 
-  --accent-glow: rgba(99, 102, 241, 0.4);
-  --accent-secondary: #f43f5e; 
-  --text-main: #ffffff;
-  --text-dim: #94a3b8;
-  --glass-bg: rgba(15, 23, 42, 0.7); 
-  --glass-border: rgba(255, 255, 255, 0.1); 
-  --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --bg-dark: #f8fafc; 
+  --accent: #4f46e5; 
+  --accent-glow: rgba(79, 70, 229, 0.15);
+  --accent-secondary: #d37e90; 
+  --text-main: #0f172a;
+  --text-dim: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.85); 
+  --glass-border: rgba(0, 0, 0, 0.08); 
+  --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   font-family: 'Poppins', sans-serif;
 }
-
 
 .main-container {
   min-height: 100vh;
@@ -37,8 +36,8 @@
   top: 0; left: 0; width: 100%; height: 100%;
   z-index: -1;
   filter: blur(100px);
-  opacity: 0.6;
-  pointer-events: none; /* Allows clicks to pass through to buttons */
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .mesh-bg::before, .mesh-bg::after {
@@ -61,8 +60,7 @@
 
 /* --- Glass Card --- */
 .glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(25px) saturate(180%);
+  background: #ffffff;
   border: 1px solid var(--glass-border);
   border-radius: 32px;
   padding: 40px;
@@ -90,20 +88,20 @@
 .badge.primary { 
   background: var(--accent); 
   color: white; 
-  box-shadow: 0 0 15px var(--accent-glow); 
+  box-shadow: 0 4px 12px var(--accent-glow); 
 }
 
 .badge.secondary { 
-  background: rgba(255,255,255,0.05); 
+  background: #f1f5f9; 
   color: var(--text-dim); 
   border: 1px solid var(--glass-border);
   margin-right: 8px;
 }
 
 .exit-btn {
-  background: rgba(244, 63, 94, 0.1);
+  background: #fff1f2;
   color: var(--accent-secondary);
-  border: 1px solid rgba(244, 63, 94, 0.2);
+  border: 1px solid rgba(244, 63, 94, 0.1);
   width: 34px; height: 34px; border-radius: 10px;
   cursor: pointer; transition: 0.3s;
   display: flex; align-items: center; justify-content: center;
@@ -128,17 +126,17 @@
   font-size: 3.2rem;
   font-weight: 800;
   margin: 0;
-  background: linear-gradient(to bottom right, #ffffff, var(--accent));
+  background: linear-gradient(to bottom right, var(--text-main), var(--accent));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 15px var(--accent-glow));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.05));
 }
 
 /* --- Options List --- */
 .options-list { display: grid; gap: 12px; }
 
 .opt-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   border: 1px solid var(--glass-border);
   border-radius: 18px;
   padding: 18px 24px;
@@ -148,25 +146,29 @@
   cursor: pointer !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  z-index: 20; /* Ensure button is on top of card effects */
+  z-index: 20;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .opt-card:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
   border-color: var(--accent);
   transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .opt-card.correct {
-  background: rgba(34, 197, 94, 0.15) !important;
+  background: #f0fdf4 !important;
   border-color: #22c55e !important;
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+  color: #166534;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.1);
 }
 
 .opt-card.wrong {
-  background: rgba(244, 63, 94, 0.15) !important;
+  background: #fff1f2 !important;
   border-color: var(--accent-secondary) !important;
-  box-shadow: 0 0 20px rgba(244, 63, 94, 0.2);
+  color: #9f1239;
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.1);
 }
 
 .opt-card:disabled { opacity: 0.6; pointer-events: none; }
@@ -184,10 +186,10 @@
   font-weight: 700;
   cursor: pointer;
   transition: 0.3s;
-  box-shadow: 0 10px 20px var(--accent-glow);
+  box-shadow: 0 8px 16px var(--accent-glow);
 }
 
-.next-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+.next-btn:hover { transform: translateY(-3px); filter: brightness(1.1); box-shadow: 0 12px 20px var(--accent-glow); }
 
 /* --- Completion Screen --- */
 .completion-screen { text-align: center; }
@@ -196,11 +198,11 @@
 .trophy-glow {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   width: 100px; height: 100px; background: var(--accent);
-  filter: blur(40px); opacity: 0.5;
+  filter: blur(40px); opacity: 0.2;
 }
 
 .final-score-card {
-  background: rgba(0, 0, 0, 0.2);
+  background: #f8fafc;
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 30px;
@@ -211,12 +213,12 @@
 .score-display .total { font-size: 1.5rem; color: var(--text-dim); }
 
 .progress-container {
-  height: 6px; background: rgba(255,255,255,0.1);
+  height: 8px; background: #e2e8f0;
   border-radius: 10px; margin-top: 20px; overflow: hidden;
 }
 .progress-bar {
   height: 100%; background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
+  box-shadow: 2px 0 8px var(--accent-glow);
   transition: width 1s ease-out;
 }
 
@@ -224,7 +226,7 @@
 .loader-container { padding: 40px; text-align: center; }
 .spinner {
   width: 40px; height: 40px;
-  border: 3px solid rgba(255,255,255,0.1);
+  border: 3px solid #e2e8f0;
   border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
